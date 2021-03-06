@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,25 @@ Route::group(
         Route::post('{user}/change-password', [UserController::class, 'changePassword'])
             ->name('change-password');
         Route::delete('{user}', [UserController::class, 'destroy'])
+            ->name('destroy');
+    }
+);
+
+Route::group(
+    [
+        'prefix' => 'customers',
+        'as' => 'customers.'
+    ],
+    function () {
+        Route::get('', [CustomerController::class, 'index'])
+            ->name('index');
+        Route::post('', [CustomerController::class, 'store'])
+            ->name('store');
+        Route::get('{customer}', [CustomerController::class, 'show'])
+            ->name('show');
+        Route::post('{customer}', [CustomerController::class, 'update'])
+            ->name('update');
+        Route::delete('{customer}', [CustomerController::class, 'destroy'])
             ->name('destroy');
     }
 );

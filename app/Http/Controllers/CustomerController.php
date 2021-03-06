@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Customer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
-class UserController extends Controller
+class CustomerController extends Controller
 {
     /**
-     * The user model instance.
+     * The customer model instance.
      *
-     * @var \App\Models\User
+     * @var \App\Models\Customer
      */
-    protected $user;
+    protected $customer;
 
     /**
      * Create a new controller instance.
@@ -22,7 +21,7 @@ class UserController extends Controller
      */
     public function __construct()
     {
-        $this->user = new User();
+        $this->customer = new Customer();
     }
 
     /**
@@ -42,7 +41,7 @@ class UserController extends Controller
             'search' => 'nullable|string',
         ]);
 
-        return $this->user->getPaginatedData(
+        return $this->customer->getPaginatedData(
             $request->page,
             $request->perPage,
             $request->sorKey,
@@ -61,82 +60,61 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'username' => 'required|string|unique:users',
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email|unique:customers',
             'password' => 'required|string|min:8|confirmed',
             'avatar_path' => 'nullable|image',
             'role' => 'required|string|in:admin,owner,cashier'
         ]);
 
-        $this->user->saveDataWithAvatar($request->all());
+        $this->customer->saveData($request->all());
 
-        return $this->user;
+        return $this->customer;
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show(Customer $customer)
     {
-        return $user;
+        return $customer;
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, Customer $customer)
     {
         $request->validate([
             'name' => 'nullable|string',
-            'username' => 'nullable|string|unique:users',
-            'email' => 'nullable|email|unique:users',
+            'customername' => 'nullable|string|unique:customers',
+            'email' => 'nullable|email|unique:customers',
             'password' => 'nullable|string|min:8|confirmed',
             'avatar_path' => 'nullable|image',
             'role' => 'nullable|string|in:admin,owner,cashier'
         ]);
 
-        $user->saveDataWithAvatar($request->all());
+        $customer->saveData($request->all());
 
-        return $user;
+        return $customer;
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy(Customer $customer)
     {
-        $user->removeAvatar();
-        $user->delete();
+        $customer->delete();
 
         return null;
-    }
-
-    /**
-     * Change password user.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function changePassword(Request $request, User $user)
-    {
-        $request->validate([
-            'password' => 'string|required|min:8|confirmed'
-        ]);
-
-        $user->password = Hash::make($request->password);
-        $user->save();
-
-        return $user;
     }
 }

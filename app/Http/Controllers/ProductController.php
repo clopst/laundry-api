@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Outlet;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
-class OutletController extends Controller
+class ProductController extends Controller
 {
     /**
-     * The outlet model instance.
+     * The product model instance.
      *
-     * @var \App\Models\Outlet
+     * @var \App\Models\Product
      */
-    protected $outlet;
+    protected $product;
 
     /**
      * Create a new controller instance.
@@ -21,7 +21,7 @@ class OutletController extends Controller
      */
     public function __construct()
     {
-        $this->outlet = new Outlet();
+        $this->product = new Product();
     }
 
     /**
@@ -41,7 +41,7 @@ class OutletController extends Controller
             'search' => 'nullable|string',
         ]);
 
-        return $this->outlet->getPaginatedData(
+        return $this->product->getPaginatedData(
             $request->page,
             $request->perPage,
             $request->sorKey,
@@ -62,74 +62,55 @@ class OutletController extends Controller
             'name' => 'required|string',
             'phone_number' => 'required|string',
             'address' => 'required|string',
-            'owner_ids' => 'nullable|array',
-            'cashier_ids' => 'nullable|array'
+            'outlet_id' => 'nullable|integer|exists:outlets,id'
         ]);
 
-        $this->outlet->saveData($request->all());
+        $this->product->saveData($request->all());
 
-        if ($request->outlet_ids) {
-            $this->outlet->owners()->sync($request->owners_id);
-        }
-
-        if ($request->outlet_ids) {
-            $this->outlet->cashiers()->sync($request->cashiers_id);
-        }
-
-        return $this->outlet;
+        return $this->product;
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Outlet  $outlet
+     * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function show(Outlet $outlet)
+    public function show(Product $product)
     {
-        return $outlet;
+        return $product;
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Outlet  $outlet
+     * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Outlet $outlet)
+    public function update(Request $request, Product $product)
     {
         $request->validate([
             'name' => 'nullable|string',
-            'email' => 'nullable|email|unique:outlets',
             'phone_number' => 'nullable|string',
             'address' => 'nullable|string',
-            'owner_ids' => 'nullable|array',
-            'cashier_ids' => 'nullable|array'
+            'outlet_id' => 'nullable|integer|exists:outlets,id'
         ]);
 
-        $outlet->saveData($request->all());
+        $product->saveData($request->all());
 
-        if ($request->outlet_ids) {
-            $this->outlet->owners()->sync($request->owners_id);
-        }
-
-        if ($request->outlet_ids) {
-            $this->outlet->cashiers()->sync($request->cashiers_id);
-        }
-
-        return $outlet;
+        return $product;
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Outlet  $outlet
+     * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Outlet $outlet)
+    public function destroy(Product $product)
     {
-        $outlet->delete();
+        $product->delete();
 
         return null;
     }

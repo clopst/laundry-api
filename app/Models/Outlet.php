@@ -22,4 +22,24 @@ class Outlet extends Model
         'address',
         'owner_id'
     ];
+
+    /**
+     * Get all of the owners for the outlet.
+     *
+     * @return \lluminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function owners()
+    {
+        return $this->morphToMany(User::class, 'userable')->where('role', 'owner');
+    }
+
+    /**
+     * Get all of the cashiers for the outlet.
+     *
+     * @return \lluminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function cashiers()
+    {
+        return $this->morphToMany(User::class, 'userable')->where('role', 'cashier');
+    }
 }

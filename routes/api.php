@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\OutletController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -76,6 +77,25 @@ Route::group(
         Route::post('{outlet}', [OutletController::class, 'update'])
             ->name('update');
         Route::delete('{outlet}', [OutletController::class, 'destroy'])
+            ->name('destroy');
+    }
+);
+
+Route::group(
+    [
+        'prefix' => 'products',
+        'as' => 'products.'
+    ],
+    function () {
+        Route::get('', [ProductController::class, 'index'])
+            ->name('index');
+        Route::post('', [ProductController::class, 'store'])
+            ->name('store');
+        Route::get('{product}', [ProductController::class, 'show'])
+            ->name('show');
+        Route::post('{product}', [ProductController::class, 'update'])
+            ->name('update');
+        Route::delete('{product}', [ProductController::class, 'destroy'])
             ->name('destroy');
     }
 );

@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
+use App\Models\Outlet;
 use Illuminate\Http\Request;
 
-class CustomerController extends Controller
+class OutletController extends Controller
 {
     /**
-     * The customer model instance.
+     * The outlet model instance.
      *
-     * @var \App\Models\Customer
+     * @var \App\Models\Outlet
      */
-    protected $customer;
+    protected $outlet;
 
     /**
      * Create a new controller instance.
@@ -21,7 +21,7 @@ class CustomerController extends Controller
      */
     public function __construct()
     {
-        $this->customer = new Customer();
+        $this->outlet = new Outlet();
     }
 
     /**
@@ -41,7 +41,7 @@ class CustomerController extends Controller
             'search' => 'nullable|string',
         ]);
 
-        return $this->customer->getPaginatedData(
+        return $this->outlet->getPaginatedData(
             $request->page,
             $request->perPage,
             $request->sorKey,
@@ -60,57 +60,56 @@ class CustomerController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'email' => 'required|email|unique:customers',
             'phone_number' => 'required|string',
             'address' => 'required|string'
         ]);
 
-        $this->customer->saveData($request->all());
+        $this->outlet->saveData($request->all());
 
-        return $this->customer;
+        return $this->outlet;
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Customer  $customer
+     * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
      */
-    public function show(Customer $customer)
+    public function show(Outlet $outlet)
     {
-        return $customer;
+        return $outlet;
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Customer  $customer
+     * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Customer $customer)
+    public function update(Request $request, Outlet $outlet)
     {
         $request->validate([
             'name' => 'nullable|string',
-            'email' => 'nullable|email|unique:customers',
+            'email' => 'nullable|email|unique:outlets',
             'phone_number' => 'nullable|string',
             'address' => 'nullable|string'
         ]);
 
-        $customer->saveData($request->all());
+        $outlet->saveData($request->all());
 
-        return $customer;
+        return $outlet;
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Customer  $customer
+     * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Customer $customer)
+    public function destroy(Outlet $outlet)
     {
-        $customer->delete();
+        $outlet->delete();
 
         return null;
     }

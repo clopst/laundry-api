@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class CustomerSeeder extends Seeder
+class OutletSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,20 +15,18 @@ class CustomerSeeder extends Seeder
      */
     public function run()
     {
-        $customers = [
+        $outlets = [
             [
-                'name' => 'John Doe',
-                'email' => 'johndoe@example.com',
+                'name' => 'Outlet Bandung',
                 'phone_number' => '081244556677',
-                'address' => 'Jl. Sukamiskin No.7',
+                'address' => 'Jl. Bandung Negara',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ],
             [
-                'name' => 'Jane Doe',
-                'email' => 'janedoe@example.com',
+                'name' => 'Outlet Jakarta',
                 'phone_number' => '081244556688',
-                'address' => 'Jl. Sukamiskin No.9',
+                'address' => 'Jl. Jakarta Negara',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ]
@@ -36,9 +34,8 @@ class CustomerSeeder extends Seeder
 
         $faker = \Faker\Factory::create('id_ID');
         for ($i = 0; $i < 10; $i++) {
-            $customers[] = [
+            $outlets[] = [
                 'name' => $faker->name,
-                'email' => $faker->safeEmail,
                 'phone_number' => $faker->phoneNumber,
                 'address' => $faker->address,
                 'created_at' => Carbon::now(),
@@ -46,6 +43,6 @@ class CustomerSeeder extends Seeder
             ];
         }
 
-        DB::table('customers')->insert($customers);
+        DB::table('outlets')->insert($outlets);
     }
 }

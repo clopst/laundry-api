@@ -59,6 +59,16 @@ class User extends Authenticatable
     ];
 
     /**
+     * Get all of the outlets that are assigned to this user.
+     *
+     * @return void
+     */
+    public function outlets()
+    {
+        return $this->morphedByMany(Outlet::class, 'userable');
+    }
+
+    /**
      * Save data and handle avatar image.
      *
      * @return bool

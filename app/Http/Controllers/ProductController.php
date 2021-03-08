@@ -44,7 +44,7 @@ class ProductController extends Controller
         return $this->product->getPaginatedData(
             $request->page,
             $request->perPage,
-            $request->sorKey,
+            $request->sortKey,
             $request->sortOrder,
             $request->search
         );

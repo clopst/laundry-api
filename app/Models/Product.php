@@ -21,4 +21,15 @@ class Product extends Model
         'phone_number',
         'address'
     ];
+
+    /**
+     * The attributes that are searchable.
+     *
+     * @var array
+     */
+    protected $searchable = [
+        'name',
+        'phone_number',
+        'address'
+    ];
 }

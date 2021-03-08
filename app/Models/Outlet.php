@@ -24,22 +24,100 @@ class Outlet extends Model
     ];
 
     /**
-     * Get all of the owners for the outlet.
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'users'
+    ];
+
+    /**
+     * The attributes that are searchable.
+     *
+     * @var array
+     */
+    protected $searchable = [
+        'name',
+        'phone_number',
+        'address',
+        'owner_id'
+    ];
+
+    /**
+     * Get all of the users for the outlet.
      *
      * @return \lluminate\Database\Eloquent\Relations\MorphToMany
      */
-    public function owners()
+    public function users()
     {
-        return $this->morphToMany(User::class, 'userable')->where('role', 'owner');
+        return $this->morphToMany(User::class, 'userable');
     }
 
     /**
-     * Get all of the cashiers for the outlet.
+     * Get owners attribute.
      *
-     * @return \lluminate\Database\Eloquent\Relations\MorphToMany
+     * @return \Illuminate\Support\Collection
      */
-    public function cashiers()
+    public function getOwnersAttribute()
     {
-        return $this->morphToMany(User::class, 'userable')->where('role', 'cashier');
+        return $this->users->where('role', 'owner');
+    }
+
+    /**
+     * Get cashiers attribute.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getCashiersAttribute()
+    {
+        return $this->users->where('role', 'cashier');
+    }
+
+    /**
+     * Get owner_ids attribute.
+     *
+     * @return array
+     */
+    public function getOwnerIdsAttribute()
+    {
+        return $this->owners->pluck('id');
+    }
+
+    /**
+     * Get cashier_ids attribute.
+     *
+     * @return array
+     */
+    public function getCashierIdsAttribute()
+    {
+        return $this->cashiers->pluck('id');
+    }
+
+    /**
+     * Get dropdowns data for the purposes of this model.
+     *
+     * @return array
+     */
+    public function getDropdowns()
+    {
+        $data = [];
+
+        $data['owners'] = User::where('role', 'owner')->get()
+            ->map(fn ($item) => [
+                'label' => $item->name,
+                'value' => $item->id
+            ])->all();
+
+        $data['cashiers'] = User::doesntHave('outlets')
+            ->where('role', 'cashier')
+            ->orWhereIn('id', $this->cashier_ids)
+            ->get()
+            ->map(fn ($item) => [
+                'label' => $item->name,
+                'value' => $item->id
+            ])->all();
+
+        return $data;
     }
 }

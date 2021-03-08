@@ -72,9 +72,11 @@ Route::group(
             ->name('index');
         Route::post('', [OutletController::class, 'store'])
             ->name('store');
+        Route::get('dropdowns', [OutletController::class, 'getDropdowns'])
+            ->name('dropdowns');
         Route::get('{outlet}', [OutletController::class, 'show'])
             ->name('show');
-        Route::post('{outlet}', [OutletController::class, 'update'])
+        Route::put('{outlet}', [OutletController::class, 'update'])
             ->name('update');
         Route::delete('{outlet}', [OutletController::class, 'destroy'])
             ->name('destroy');

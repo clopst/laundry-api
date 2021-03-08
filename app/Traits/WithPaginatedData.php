@@ -51,14 +51,18 @@ trait WithPaginatedData
         $total = $query->count();
         $lastPage = ceil($total / $perPage);
 
+        if ($page > $lastPage) {
+            return $this->paginate($query, $page - 1, $perPage);
+        }
+
         $query = $query->offset($offset)->limit($perPage);
         $pagination = [
-            'page' => $page,
-            'perPage' => $perPage,
-            'lastPage' => $lastPage,
-            'start' => $page > $lastPage ? 0 : $offset + 1,
-            'end' => $page > $lastPage ? 0 : $offset + $query->count(),
-            'total' => $total
+            'page' => (int) $page,
+            'perPage' => (int) $perPage,
+            'lastPage' => (int) $lastPage,
+            'start' => (int) $page > $lastPage ? 0 : $offset + 1,
+            'end' => (int) $page > $lastPage ? 0 : $offset + $query->count(),
+            'total' => (int) $total
         ];
 
         return [

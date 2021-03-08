@@ -41,10 +41,12 @@ class OutletController extends Controller
             'search' => 'nullable|string',
         ]);
 
+        $this->outlet->append(['owners', 'cashiers']);
+
         return $this->outlet->getPaginatedData(
             $request->page,
             $request->perPage,
-            $request->sorKey,
+            $request->sortKey,
             $request->sortOrder,
             $request->search
         );
@@ -68,13 +70,7 @@ class OutletController extends Controller
 
         $this->outlet->saveData($request->all());
 
-        if ($request->outlet_ids) {
-            $this->outlet->owners()->sync($request->owners_id);
-        }
-
-        if ($request->outlet_ids) {
-            $this->outlet->cashiers()->sync($request->cashiers_id);
-        }
+        $this->outlet->users()->sync(array_merge($request->owner_ids, $request->cashier_ids));
 
         return $this->outlet;
     }
@@ -87,6 +83,8 @@ class OutletController extends Controller
      */
     public function show(Outlet $outlet)
     {
+        $outlet->append(['owners', 'cashiers', 'owner_ids', 'cashier_ids']);
+
         return $outlet;
     }
 
@@ -110,13 +108,7 @@ class OutletController extends Controller
 
         $outlet->saveData($request->all());
 
-        if ($request->outlet_ids) {
-            $this->outlet->owners()->sync($request->owners_id);
-        }
-
-        if ($request->outlet_ids) {
-            $this->outlet->cashiers()->sync($request->cashiers_id);
-        }
+        $outlet->users()->sync(array_merge($request->owner_ids, $request->cashier_ids));
 
         return $outlet;
     }
@@ -132,5 +124,22 @@ class OutletController extends Controller
         $outlet->delete();
 
         return null;
+    }
+
+    /**
+     * Get dropdowns data.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getDropdowns(Request $request)
+    {
+        if ($request->id) {
+            $outlet = Outlet::find($request->id);
+        } else {
+            $outlet = $this->outlet;
+        }
+
+        return $outlet->getDropdowns();
     }
 }

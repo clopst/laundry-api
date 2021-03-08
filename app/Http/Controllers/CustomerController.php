@@ -44,7 +44,7 @@ class CustomerController extends Controller
         return $this->customer->getPaginatedData(
             $request->page,
             $request->perPage,
-            $request->sorKey,
+            $request->sortKey,
             $request->sortOrder,
             $request->search
         );

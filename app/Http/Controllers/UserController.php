@@ -45,7 +45,7 @@ class UserController extends Controller
         return $this->user->getPaginatedData(
             $request->page,
             $request->perPage,
-            $request->sorKey,
+            $request->sortKey,
             $request->sortOrder,
             $request->search
         );
@@ -95,8 +95,8 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'nullable|string',
-            'username' => 'nullable|string|unique:users',
-            'email' => 'nullable|email|unique:users',
+            'username' => 'nullable|string|unique:users,username,' . $user->id,
+            'email' => 'nullable|email|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
             'avatar_path' => 'nullable|image',
             'role' => 'nullable|string|in:admin,owner,cashier'

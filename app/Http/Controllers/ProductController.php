@@ -46,7 +46,8 @@ class ProductController extends Controller
             $request->perPage,
             $request->sortKey,
             $request->sortOrder,
-            $request->search
+            $request->search,
+            ['outlet']
         );
     }
 
@@ -60,8 +61,8 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'phone_number' => 'required|string',
-            'address' => 'required|string',
+            'unit' => 'required|string',
+            'price' => 'required|integer',
             'outlet_id' => 'nullable|integer|exists:outlets,id'
         ]);
 
@@ -92,8 +93,8 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'nullable|string',
-            'phone_number' => 'nullable|string',
-            'address' => 'nullable|string',
+            'unit' => 'required|string',
+            'price' => 'required|integer',
             'outlet_id' => 'nullable|integer|exists:outlets,id'
         ]);
 
@@ -113,5 +114,16 @@ class ProductController extends Controller
         $product->delete();
 
         return null;
+    }
+
+    /**
+     * Get dropdowns data.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getDropdowns(Request $request)
+    {
+        return $this->product->getDropdowns();
     }
 }

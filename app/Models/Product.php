@@ -18,8 +18,10 @@ class Product extends Model
      */
     protected $fillable = [
         'name',
-        'phone_number',
-        'address'
+        'unit',
+        'price',
+        'description',
+        'outlet_id'
     ];
 
     /**
@@ -29,7 +31,36 @@ class Product extends Model
      */
     protected $searchable = [
         'name',
-        'phone_number',
-        'address'
+        'unit',
+        'price',
+        'description'
     ];
+
+    /**
+     * Get the outlet that owns the Product
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function outlet()
+    {
+        return $this->belongsTo(Outlet::class);
+    }
+
+    /**
+     * Get dropdowns data for the purposes of this model.
+     *
+     * @return array
+     */
+    public function getDropdowns()
+    {
+        $data = [];
+
+        $data['outlets'] = Outlet::all()
+            ->map(fn ($item) => [
+                'label' => $item->name,
+                'value' => $item->id
+            ])->all();
+
+        return $data;
+    }
 }

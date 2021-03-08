@@ -55,7 +55,7 @@ Route::group(
             ->name('store');
         Route::get('{customer}', [CustomerController::class, 'show'])
             ->name('show');
-        Route::post('{customer}', [CustomerController::class, 'update'])
+        Route::put('{customer}', [CustomerController::class, 'update'])
             ->name('update');
         Route::delete('{customer}', [CustomerController::class, 'destroy'])
             ->name('destroy');
@@ -93,9 +93,11 @@ Route::group(
             ->name('index');
         Route::post('', [ProductController::class, 'store'])
             ->name('store');
+        Route::get('dropdowns', [ProductController::class, 'getDropdowns'])
+            ->name('dropdowns');
         Route::get('{product}', [ProductController::class, 'show'])
             ->name('show');
-        Route::post('{product}', [ProductController::class, 'update'])
+        Route::put('{product}', [ProductController::class, 'update'])
             ->name('update');
         Route::delete('{product}', [ProductController::class, 'destroy'])
             ->name('destroy');

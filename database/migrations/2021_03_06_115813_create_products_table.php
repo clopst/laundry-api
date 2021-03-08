@@ -18,6 +18,7 @@ class CreateProductsTable extends Migration
             $table->string('name');
             $table->string('unit', 10);
             $table->integer('price');
+            $table->text('description')->nullable();
             $table->integer('outlet_id')->nullable();
             $table->foreign('outlet_id')
                 ->references('id')

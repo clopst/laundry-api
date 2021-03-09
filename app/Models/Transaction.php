@@ -176,4 +176,31 @@ class Transaction extends Model
             }
         });
     }
+
+    /**
+     * Get today transactions count.
+     *
+     * @param  string  $date
+     * @return int
+     */
+    public function getTodayCount($date = null)
+    {
+        $today = $date ?? date('Y-m-d');
+
+        return $this->where('date', $today)->count();
+    }
+
+    /**
+     * Get today transactions count.
+     *
+     * @param  int  $count
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getLatest($count = 10)
+    {
+        return $this->with(['customer', 'outlet', 'product', 'cashier'])
+            ->orderBy('date', 'desc')
+            ->limit($count)
+            ->get();
+    }
 }

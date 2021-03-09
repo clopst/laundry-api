@@ -34,4 +34,14 @@ class Customer extends Model
         'phone_number',
         'address'
     ];
+
+    /**
+     * Get customers count.
+     *
+     * @return int
+     */
+    public function getCount()
+    {
+        return $this->count();
+    }
 }

@@ -63,4 +63,14 @@ class Product extends Model
 
         return $data;
     }
+
+    /**
+     * Get products count.
+     *
+     * @return int
+     */
+    public function getCount()
+    {
+        return $this->count();
+    }
 }

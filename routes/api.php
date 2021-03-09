@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TransactionController;
@@ -125,5 +126,16 @@ Route::group(
             ->name('change-status');
         Route::delete('{transaction}', [TransactionController::class, 'destroy'])
             ->name('destroy');
+    }
+);
+
+Route::group(
+    [
+        'prefix' => 'dashboard',
+        'as' => 'dashboard.'
+    ],
+    function () {
+        Route::get('', [DashboardController::class, 'index'])
+            ->name('index');
     }
 );

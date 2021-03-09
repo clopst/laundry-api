@@ -120,4 +120,14 @@ class Outlet extends Model
 
         return $data;
     }
+
+    /**
+     * Get outlets count.
+     *
+     * @return int
+     */
+    public function getCount()
+    {
+        return $this->count();
+    }
 }

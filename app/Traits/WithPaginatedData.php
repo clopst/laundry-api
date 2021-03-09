@@ -24,15 +24,23 @@ trait WithPaginatedData
         $sortOrder = $sortOrder ?? 'asc';
         $search = $search ?? null;
 
-        $query = $this->with($withRelations)->orderBy($sortKey, $sortOrder);
+        if (method_exists($this, 'querySort')) {
+            $query = $this->querySort($withRelations, $sortKey, $sortOrder);
+        } else {
+            $query = $this->with($withRelations)->orderBy($sortKey, $sortOrder);
+        }
 
         if ($search) {
             $searchKeyword = "%$search%";
-            $query = $query->where(function ($q) use ($searchKeyword) {
-                foreach ($this->searchable as $field) {
-                    $q->orWhere($field, 'ilike', $searchKeyword);
-                }
-            });
+            if (method_exists($this, 'querySearch')) {
+                $query = $this->querySearch($query, $searchKeyword);
+            } else {
+                $query = $query->where(function ($q) use ($searchKeyword) {
+                    foreach ($this->searchable as $field) {
+                        $q->orWhere($field, 'ilike', $searchKeyword);
+                    }
+                });
+            }
         }
 
         return $this->paginate($query, $page, $perPage);

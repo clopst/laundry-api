@@ -3,6 +3,7 @@
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -100,6 +101,29 @@ Route::group(
         Route::put('{product}', [ProductController::class, 'update'])
             ->name('update');
         Route::delete('{product}', [ProductController::class, 'destroy'])
+            ->name('destroy');
+    }
+);
+
+Route::group(
+    [
+        'prefix' => 'transactions',
+        'as' => 'transactions.'
+    ],
+    function () {
+        Route::get('', [TransactionController::class, 'index'])
+            ->name('index');
+        Route::post('', [TransactionController::class, 'store'])
+            ->name('store');
+        Route::get('dropdowns', [TransactionController::class, 'getDropdowns'])
+            ->name('dropdowns');
+        Route::get('{transaction}', [TransactionController::class, 'show'])
+            ->name('show');
+        Route::put('{transaction}', [TransactionController::class, 'update'])
+            ->name('update');
+        Route::post('{id}/change-status', [TransactionController::class, 'changeStatus'])
+            ->name('change-status');
+        Route::delete('{transaction}', [TransactionController::class, 'destroy'])
             ->name('destroy');
     }
 );

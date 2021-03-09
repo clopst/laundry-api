@@ -46,7 +46,8 @@ class TransactionController extends Controller
             $request->perPage,
             $request->sortKey,
             $request->sortOrder,
-            $request->search
+            $request->search,
+            ['customer', 'outlet', 'product', 'cashier']
         );
     }
 
@@ -60,15 +61,18 @@ class TransactionController extends Controller
     {
         $request->validate([
             'outlet_id' => 'nullable|integer|exists:outlets,id',
-            'cashier_id' => 'nullable|integer|exists:cashiers,id',
+            'cashier_id' => 'nullable|integer|exists:users,id',
             'customer_id' => 'nullable|integer|exists:customers,id',
             'product_id' => 'nullable|integer|exists:products,id',
             'qty' => 'nullable|integer',
             'total_price' => 'nullable|integer'
         ]);
 
-        $request->status = 'process';
-        $request->payment = 'pending';
+        $request->request->add([
+            'status' => 'process',
+            'payment' => 'pending',
+            'date' => date('Y-m-d')
+        ]);
 
         $this->transaction->saveData($request->all());
 
@@ -97,7 +101,7 @@ class TransactionController extends Controller
     {
         $request->validate([
             'outlet_id' => 'nullable|integer|exists:outlets,id',
-            'cashier_id' => 'nullable|integer|exists:cashiers,id',
+            'cashier_id' => 'nullable|integer|exists:users,id',
             'customer_id' => 'nullable|integer|exists:customers,id',
             'product_id' => 'nullable|integer|exists:products,id',
             'qty' => 'nullable|integer',
@@ -119,8 +123,34 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
-        $transaction->delete();
+        return $transaction->delete();
+    }
 
-        return null;
+    /**
+     * Get dropdowns data.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getDropdowns(Request $request)
+    {
+        return $this->transaction->getDropdowns();
+    }
+
+    /**
+     * Get dropdowns data.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function changeStatus(Request $request, $id)
+    {
+        $transaction = Transaction::find($id);
+        $transaction->status = $request->status;
+        $transaction->payment = $request->payment;
+        $transaction->save();
+
+        return $transaction;
     }
 }

@@ -97,7 +97,6 @@ class UserController extends Controller
             'name' => 'nullable|string',
             'username' => 'nullable|string|unique:users,username,' . $user->id,
             'email' => 'nullable|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8|confirmed',
             'avatar_path' => 'nullable|image',
             'role' => 'nullable|string|in:admin,owner,cashier'
         ]);

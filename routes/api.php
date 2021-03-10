@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OutletController;
@@ -20,14 +21,29 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware('auth:sanctum')->get('/auth', [AuthController::class, 'getUser']);
+
+Route::group(
+    [
+        'prefix' => 'auth',
+        'as' => 'auth.',
+        'middleware' => ['auth:sanctum']
+    ],
+    function () {
+        Route::get('', [AuthController::class, 'getUser'])
+            ->name('index');
+        Route::post('update-profile', [AuthController::class, 'updateProfile'])
+            ->name('update-profile');
+        Route::post('change-password', [AuthController::class, 'changePassword'])
+            ->name('change-password');
+    }
+);
 
 Route::group(
     [
         'prefix' => 'users',
-        'as' => 'users.'
+        'as' => 'users.',
+        'middleware' => ['auth:sanctum']
     ],
     function () {
         Route::get('', [UserController::class, 'index'])
@@ -48,7 +64,8 @@ Route::group(
 Route::group(
     [
         'prefix' => 'customers',
-        'as' => 'customers.'
+        'as' => 'customers.',
+        'middleware' => ['auth:sanctum']
     ],
     function () {
         Route::get('', [CustomerController::class, 'index'])
@@ -67,7 +84,8 @@ Route::group(
 Route::group(
     [
         'prefix' => 'outlets',
-        'as' => 'outlets.'
+        'as' => 'outlets.',
+        'middleware' => ['auth:sanctum']
     ],
     function () {
         Route::get('', [OutletController::class, 'index'])
@@ -88,7 +106,8 @@ Route::group(
 Route::group(
     [
         'prefix' => 'products',
-        'as' => 'products.'
+        'as' => 'products.',
+        'middleware' => ['auth:sanctum']
     ],
     function () {
         Route::get('', [ProductController::class, 'index'])
@@ -109,7 +128,8 @@ Route::group(
 Route::group(
     [
         'prefix' => 'transactions',
-        'as' => 'transactions.'
+        'as' => 'transactions.',
+        'middleware' => ['auth:sanctum']
     ],
     function () {
         Route::get('', [TransactionController::class, 'index'])
@@ -132,7 +152,8 @@ Route::group(
 Route::group(
     [
         'prefix' => 'dashboard',
-        'as' => 'dashboard.'
+        'as' => 'dashboard.',
+        'middleware' => ['auth:sanctum']
     ],
     function () {
         Route::get('', [DashboardController::class, 'index'])

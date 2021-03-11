@@ -4,8 +4,11 @@ namespace App\Models;
 
 use App\Traits\ModelOperation;
 use App\Traits\WithPaginatedData;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class Outlet extends Model
 {
@@ -129,5 +132,28 @@ class Outlet extends Model
     public function getCount()
     {
         return $this->count();
+    }
+
+    /**
+     * Scope a query to filter by logged in user.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFilterByAuth($query)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return $query;
+        }
+
+        Log::debug($user->outlets);
+
+        if (in_array($user->role, ['owner', 'cashier'])) {
+            $query = $query->whereIn('id', $user->outlets->pluck('id'));
+        }
+
+        return $query;
     }
 }

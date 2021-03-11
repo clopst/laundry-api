@@ -7,6 +7,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -115,5 +116,26 @@ class User extends Authenticatable
 
         $file = $avatar->store('avatars', 'public');
         $this->avatar_path = $file;
+    }
+
+    /**
+     * Scope a query to filter by logged in user.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFilterByAuth($query)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return $query;
+        }
+
+        if ($user->role === 'cashier') {
+            $query = $query->where('id', $user->id);
+        }
+
+        return $query;
     }
 }

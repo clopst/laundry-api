@@ -4,8 +4,10 @@ namespace App\Models;
 
 use App\Traits\ModelOperation;
 use App\Traits\WithPaginatedData;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class Transaction extends Model
@@ -103,13 +105,13 @@ class Transaction extends Model
                 'value' => $item->id
             ])->all();
 
-        $data['outlets'] = Outlet::all()
+        $data['outlets'] = Outlet::filterByAuth()->get()
             ->map(fn ($item) => [
                 'label' => $item->name,
                 'value' => $item->id
             ])->all();
 
-        $data['products'] = Product::all()
+        $data['products'] = Product::filterByAuth()->get()
             ->map(fn ($item) => [
                 'label' => $item->name,
                 'value' => $item->id,
@@ -119,6 +121,7 @@ class Transaction extends Model
 
         $data['cashiers'] = User::has('outlets')
             ->where('role', 'cashier')
+            ->filterByAuth()
             ->get()
             ->map(fn ($item) => [
                 'label' => $item->name,
@@ -178,6 +181,40 @@ class Transaction extends Model
     }
 
     /**
+     * Query before paginating.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function queryBeforePaginate(Builder $query)
+    {
+        return $query->filterByAuth();
+    }
+
+    /**
+     * Scope a query to filter by logged in user.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFilterByAuth($query)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return $query;
+        }
+
+        if ($user->role === 'cashier') {
+            $query = $query->where('cashier_id', $user->id)->where('outlet_id', $user->outlets[0]->id);
+        } elseif ($user->role === 'owner') {
+            $query = $query->whereIn('outlet_id', $user->outlets->pluck('id'));
+        }
+
+        return $query;
+    }
+
+    /**
      * Get today transactions count.
      *
      * @param  string  $date
@@ -187,7 +224,7 @@ class Transaction extends Model
     {
         $today = $date ?? date('Y-m-d');
 
-        return $this->where('date', $today)->count();
+        return $this->where('date', $today)->filterByAuth()->count();
     }
 
     /**
@@ -201,6 +238,7 @@ class Transaction extends Model
         return $this->with(['customer', 'outlet', 'product', 'cashier'])
             ->orderBy('date', 'desc')
             ->limit($count)
+            ->filterByAuth()
             ->get();
     }
 }

@@ -43,6 +43,10 @@ trait WithPaginatedData
             }
         }
 
+        if (method_exists($this, 'queryBeforePaginate')) {
+            $query = $this->queryBeforePaginate($query);
+        }
+
         return $this->paginate($query, $page, $perPage);
     }
 

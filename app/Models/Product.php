@@ -6,6 +6,7 @@ use App\Traits\ModelOperation;
 use App\Traits\WithPaginatedData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Product extends Model
 {
@@ -72,5 +73,28 @@ class Product extends Model
     public function getCount()
     {
         return $this->count();
+    }
+
+    /**
+     * Scope a query to filter by logged in user.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFilterByAuth($query)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return $query;
+        }
+
+        if (in_array($user->role, ['owner', 'cashier'])) {
+            $query = $query->whereHas('outlet', function ($q) use ($user) {
+                $q->whereIn('id', $user->outlets->pluck('id'));
+            })->orWhere('outlet_id', null);
+        }
+
+        return $query;
     }
 }

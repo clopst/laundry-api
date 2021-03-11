@@ -18,6 +18,10 @@ trait ModelOperation
             $this->{$key} = $value;
         }
 
+        if (method_exists($this, 'beforeSaveData')) {
+            $this->beforeSaveData();
+        }
+
         return $this->save();
     }
 }

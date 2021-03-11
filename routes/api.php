@@ -21,8 +21,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/auth', [AuthController::class, 'getUser']);
-
 Route::group(
     [
         'prefix' => 'auth',
@@ -129,7 +127,7 @@ Route::group(
     [
         'prefix' => 'transactions',
         'as' => 'transactions.',
-        'middleware' => ['auth:sanctum']
+        // 'middleware' => ['auth:sanctum']
     ],
     function () {
         Route::get('', [TransactionController::class, 'index'])
@@ -138,6 +136,8 @@ Route::group(
             ->name('store');
         Route::get('dropdowns', [TransactionController::class, 'getDropdowns'])
             ->name('dropdowns');
+        Route::get('export', [TransactionController::class, 'export'])
+            ->name('export');
         Route::get('{transaction}', [TransactionController::class, 'show'])
             ->name('show');
         Route::put('{transaction}', [TransactionController::class, 'update'])

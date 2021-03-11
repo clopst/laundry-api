@@ -58,7 +58,7 @@ class AuthController extends Controller
      */
     public function getUser(Request $request)
     {
-        return $request->user();
+        return $request->user()->load('outlets');
     }
 
     /**

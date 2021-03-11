@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\TransactionsExport;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TransactionController extends Controller
 {
@@ -87,7 +89,7 @@ class TransactionController extends Controller
      */
     public function show(Transaction $transaction)
     {
-        return $transaction;
+        return $transaction->load(['customer', 'outlet', 'product', 'cashier']);
     }
 
     /**
@@ -152,5 +154,29 @@ class TransactionController extends Controller
         $transaction->save();
 
         return $transaction;
+    }
+
+    /**
+     * Get exported data as excel.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function export(Request $request)
+    {
+        $request->validate([
+            'startDate' => 'nullable|date',
+            'endDate' => 'nullable|date',
+            'outletIds' => 'nullable|array',
+        ]);
+
+        $export = new TransactionsExport(
+            $request->startDate,
+            $request->endDate,
+            $request->outletIds
+        );
+
+        return $export->download('transactions_report.xlsx');
     }
 }
